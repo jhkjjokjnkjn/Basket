@@ -33,7 +33,7 @@
   /* ---- HEADER ---- */
   header {
     max-width: 1000px;
-    margin: 0 auto 30px;
+    margin: 0 auto 26px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -49,18 +49,11 @@
   }
   .logo span { color: var(--accent); }
 
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .header-right { display: flex; align-items: center; gap: 12px; }
 
   .save-status {
-    font-size: 11px;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
   }
   .save-dot {
     width: 7px; height: 7px; border-radius: 50%;
@@ -69,20 +62,12 @@
   }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
 
-  /* BOUTON ANNULER */
   .btn-undo {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--danger);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 8px 14px;
-    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--danger);
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700;
+    padding: 8px 14px; cursor: pointer;
     transition: background .15s, border-color .15s, transform .1s;
   }
   .btn-undo:hover { background: #231a1a; border-color: var(--danger); }
@@ -90,29 +75,38 @@
   .btn-undo:disabled { opacity: .3; cursor: not-allowed; }
   .btn-undo svg { flex-shrink: 0; }
 
-  /* ---- STATS ---- */
-  .stats-grid {
+  /* ---- KPI ROWS ---- */
+  .kpi-row {
     max-width: 1000px;
-    margin: 0 auto 22px;
+    margin: 0 auto 12px;
     display: grid;
     grid-template-columns: repeat(4,1fr);
     gap: 10px;
   }
-  @media(max-width:640px){ .stats-grid{grid-template-columns:1fr 1fr} }
+  @media(max-width:640px){ .kpi-row{grid-template-columns:1fr 1fr} }
 
-  .stat-card {
+  .kpi-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
   }
-  .stat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-  .stat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+  .kpi-card.highlight { border-color: rgba(240,192,96,.35); }
+  .kpi-card.highlight::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(240,192,96,.07) 0%, transparent 60%);
+  }
+  .kpi-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .kpi-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+  .kpi-sub { font-size: 9px; color: var(--muted); margin-top: 3px; }
   .col-y { color: var(--accent); }
   .col-g { color: var(--accent2); }
   .col-p { color: var(--accent3); }
+  .col-r { color: var(--danger); }
 
-  /* ---- PRODUITS (grille principale) ---- */
+  /* ---- PRODUITS ---- */
   .products-section {
     max-width: 1000px;
     margin: 0 auto 22px;
@@ -120,12 +114,9 @@
 
   .section-label {
     font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    margin-bottom: 14px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); margin-bottom: 14px;
   }
 
   .products-grid {
@@ -139,71 +130,46 @@
     border: 2px solid var(--border);
     border-radius: 14px;
     padding: 24px 18px 20px;
-    cursor: pointer;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
     position: relative;
     transition: border-color .15s, background .15s, transform .12s, box-shadow .15s;
     animation: fadeIn .2s ease;
-    user-select: none;
-    min-height: 130px;
-    justify-content: center;
+    user-select: none; min-height: 130px; justify-content: center;
   }
   .prod-card:hover {
-    border-color: var(--accent2);
-    background: #1b2820;
+    border-color: var(--accent2); background: #1b2820;
     box-shadow: 0 0 0 1px var(--accent2), 0 4px 20px rgba(96,208,160,.12);
   }
-  .prod-card:active {
-    transform: scale(.94);
-  }
+  .prod-card:active { transform: scale(.94); }
   .prod-card.flash {
-    border-color: var(--accent2) !important;
-    background: #1e3028 !important;
+    border-color: var(--accent2) !important; background: #1e3028 !important;
     box-shadow: 0 0 0 2px var(--accent2), 0 0 24px rgba(96,208,160,.4) !important;
   }
+  .prod-card.star-card { border-color: rgba(240,192,96,.5); }
 
-  .prod-emoji {
-    font-size: 30px;
-    line-height: 1;
-    margin-bottom: 2px;
+  .star-badge {
+    position: absolute; top: 8px; right: 10px;
+    font-size: 14px; line-height: 1;
   }
 
-  .prod-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1.3;
-  }
-
-  .prod-price {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--accent2);
-    letter-spacing: -0.3px;
-  }
-
-  .prod-count {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .prod-emoji { font-size: 30px; line-height: 1; margin-bottom: 2px; }
+  .prod-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.3; }
+  .prod-price { font-size: 18px; font-weight: 700; color: var(--accent2); letter-spacing: -0.3px; }
+  .prod-count { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
   @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
 
-  /* ---- BOTTOM ROW : stats + historique ---- */
-  .bottom-row {
+  /* ---- DASHBOARD GRID ---- */
+  .dashboard {
     max-width: 1000px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
   }
-  @media(max-width:640px){ .bottom-row{grid-template-columns:1fr} }
+  @media(max-width:780px){ .dashboard{grid-template-columns:1fr 1fr} }
+  @media(max-width:520px){ .dashboard{grid-template-columns:1fr} }
 
   .panel {
     background: var(--card);
@@ -214,41 +180,68 @@
 
   .panel-title {
     font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    margin-bottom: 14px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); margin-bottom: 14px;
   }
 
-  /* Stats produit */
-  .prod-stat-list { display: flex; flex-direction: column; gap: 8px; }
-  .psr {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 13px;
+  /* Meilleures ventes */
+  .best-list { display: flex; flex-direction: column; gap: 8px; }
+  .best-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
   }
-  .psh { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
-  .psn { font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .best-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 7px; }
+  .best-name { font-size: 12px; font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rank-badge {
     font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
-    background: var(--card); border: 1px solid var(--border);
     border-radius: 20px; padding: 1px 7px; white-space: nowrap;
+    border: 1px solid var(--border); background: var(--card);
   }
   .r1{color:var(--accent);border-color:var(--accent)}
   .r2{color:#c0c0d0;border-color:#c0c0d0}
   .r3{color:#c08050;border-color:#c08050}
-  .psm { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .metric { background: var(--card); border-radius: 5px; padding: 6px 8px; text-align: center; }
-  .mv { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; }
-  .ml { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-top: 1px; }
-  .bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--accent2),var(--accent)); transition: width .4s ease; }
+  .best-metrics { display: flex; gap: 6px; }
+  .bm { flex: 1; background: var(--card); border-radius: 5px; padding: 5px 6px; text-align: center; }
+  .bm-v { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; }
+  .bm-l { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; margin-top: 1px; }
+  .best-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .best-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--accent2),var(--accent)); transition: width .4s ease; }
+
+  /* Activité par heure */
+  .hour-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+  .hour-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+  .hour-bar {
+    width: 100%; background: var(--border); border-radius: 3px 3px 0 0;
+    transition: height .4s ease, background .2s;
+    min-height: 3px;
+  }
+  .hour-bar.active { background: linear-gradient(180deg, var(--accent2), var(--accent3)); }
+  .hour-lbl { font-size: 8px; color: var(--muted); }
+  .hour-legend { display: flex; justify-content: space-between; margin-top: 6px; }
+  .hour-legend span { font-size: 8px; color: var(--muted); }
+
+  /* Résumé rapide */
+  .recap-list { display: flex; flex-direction: column; gap: 8px; }
+  .recap-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 7px; padding: 9px 12px; gap: 8px;
+  }
+  .recap-icon { font-size: 16px; }
+  .recap-label { flex: 1; font-size: 11px; color: var(--muted); }
+  .recap-value { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; }
 
   /* Log */
-  .sales-log { display: flex; flex-direction: column; gap: 5px; max-height: 280px; overflow-y: auto; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .btn-small {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    padding: 3px 9px; border-radius: 4px; cursor: pointer;
+  }
+  .btn-small:hover { color: var(--danger); border-color: var(--danger); }
+
+  .sales-log { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; }
   .sales-log::-webkit-scrollbar{width:3px}
   .sales-log::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
   .log-row {
@@ -257,15 +250,11 @@
     font-size: 11px; animation: fadeIn .15s ease;
   }
   .log-row.last-entry { border-left: 2px solid var(--accent2); }
-  .log-time  { color: var(--muted); font-size: 9px; white-space: nowrap; }
-  .log-name  { flex: 1; }
-  .log-amt   { color: var(--accent2); font-weight: 500; white-space: nowrap; }
+  .log-time { color: var(--muted); font-size: 9px; white-space: nowrap; }
+  .log-name { flex: 1; }
+  .log-amt  { color: var(--accent2); font-weight: 500; white-space: nowrap; }
 
-  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .btn-small { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; cursor: pointer; }
-  .btn-small:hover { color: var(--danger); border-color: var(--danger); }
-
-  .empty-state { text-align: center; color: var(--muted); font-size: 11px; padding: 16px 0; }
+  .empty-state { text-align: center; color: var(--muted); font-size: 11px; padding: 20px 0; }
 
   /* TOAST */
   .toast {
@@ -288,28 +277,56 @@
     <div class="save-status"><div class="save-dot"></div> Auto-sauvegarde</div>
     <button class="btn-undo" id="btnUndo" onclick="annulerDerniereVente()" disabled>
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 7 12 5 17 8s7 9 4 14"/></svg>
-      Annuler dernière vente
+      Annuler
     </button>
   </div>
 </header>
 
-<!-- STATS GLOBALES -->
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-lbl">CA total</div>
-    <div class="stat-val col-y" id="statCA">0,00 €</div>
+<!-- KPI ROW 1 : chiffres globaux -->
+<div class="kpi-row">
+  <div class="kpi-card highlight">
+    <div class="kpi-lbl">CA total</div>
+    <div class="kpi-val col-y" id="statCA">0,00 €</div>
+    <div class="kpi-sub" id="statCASub">—</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-lbl">Aujourd'hui</div>
-    <div class="stat-val col-g" id="statAujourd">0</div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">CA aujourd'hui</div>
+    <div class="kpi-val col-g" id="statCAJour">0,00 €</div>
+    <div class="kpi-sub" id="statCAJourSub">—</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-lbl">Produits</div>
-    <div class="stat-val" id="statProduits">0</div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">Panier moyen</div>
+    <div class="kpi-val col-p" id="statPanier">0,00 €</div>
+    <div class="kpi-sub" id="statPanierSub">—</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-lbl">Unités vendues</div>
-    <div class="stat-val col-p" id="statTotal">0</div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">Produit star ⭐</div>
+    <div class="kpi-val col-y" id="statStar">—</div>
+    <div class="kpi-sub" id="statStarSub">—</div>
+  </div>
+</div>
+
+<!-- KPI ROW 2 : métriques secondaires -->
+<div class="kpi-row" style="margin-bottom:22px">
+  <div class="kpi-card">
+    <div class="kpi-lbl">Ventes aujourd'hui</div>
+    <div class="kpi-val" id="statVentesJour">0</div>
+    <div class="kpi-sub" id="statVentesJourSub">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">Unités vendues</div>
+    <div class="kpi-val col-p" id="statTotal">0</div>
+    <div class="kpi-sub" id="statTotalSub">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">Rythme / heure</div>
+    <div class="kpi-val col-g" id="statRythme">—</div>
+    <div class="kpi-sub" id="statRythmeSub">—</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-lbl">Meilleure heure</div>
+    <div class="kpi-val" id="statHeure">—</div>
+    <div class="kpi-sub" id="statHeureSub">—</div>
   </div>
 </div>
 
@@ -319,20 +336,32 @@
   <div class="products-grid" id="productsGrid"></div>
 </div>
 
-<!-- STATS + HISTORIQUE -->
-<div class="bottom-row">
+<!-- DASHBOARD -->
+<div class="dashboard">
 
+  <!-- Meilleures ventes -->
   <div class="panel">
-    <div class="panel-title">📊 Stats par produit</div>
-    <div class="prod-stat-list" id="prodStats">
+    <div class="panel-title">🏆 Meilleures ventes</div>
+    <div class="best-list" id="bestList">
       <div class="empty-state">Aucune vente</div>
     </div>
   </div>
 
+  <!-- Activité par heure -->
+  <div class="panel">
+    <div class="panel-title">📈 Activité par heure</div>
+    <div class="hour-chart" id="hourChart"></div>
+    <div class="hour-legend">
+      <span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span>
+    </div>
+    <div id="hourEmpty" class="empty-state" style="display:none">Aucune vente</div>
+  </div>
+
+  <!-- Historique -->
   <div class="panel">
     <div class="section-header">
-      <div class="panel-title" style="margin:0">Historique</div>
-      <button class="btn-small" onclick="viderHistorique()">Tout effacer</button>
+      <div class="panel-title" style="margin:0">📋 Historique</div>
+      <button class="btn-small" onclick="viderHistorique()">Effacer</button>
     </div>
     <div class="sales-log" id="salesLog">
       <div class="empty-state">Aucune vente</div>
@@ -344,8 +373,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ---- PRODUITS PRÉ-ENREGISTRÉS ----
-  // Modifie cette liste avec tes vrais produits
   const PRODUITS_DEFAUT = [
     { id: 1, nom: 'Cookie',  emoji: '🍪', prix: 3.00,  vendu: 0 },
     { id: 2, nom: 'Frites',  emoji: '🍟', prix: 5.00,  vendu: 0 },
@@ -359,7 +386,6 @@
       const r = localStorage.getItem('suiviVentes');
       if (r) {
         const saved = JSON.parse(r);
-        // Toujours utiliser PRODUITS_DEFAUT comme source de vérité
         data.produits = PRODUITS_DEFAUT.map(p => {
           const s = saved.produits?.find(sp => sp.id === p.id);
           return {...p, vendu: s ? s.vendu : 0};
@@ -387,7 +413,7 @@
     el.textContent = msg;
     el.className = 'toast show' + (type ? ' '+type : '');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
   }
 
   // ---- VENTE 1 CLIC ----
@@ -395,39 +421,28 @@
     const prod = data.produits.find(p => p.id === id);
     if (!prod) return;
     const vente = {
-      id: Date.now(),
-      produitId: prod.id,
-      nom: prod.nom,
-      emoji: prod.emoji || '',
-      prix: prod.prix,
-      qte: 1,
-      total: prod.prix,
+      id: Date.now(), produitId: prod.id,
+      nom: prod.nom, emoji: prod.emoji || '',
+      prix: prod.prix, qte: 1, total: prod.prix,
       date: new Date().toISOString()
     };
     data.ventes.push(vente);
     prod.vendu += 1;
     sauvegarder();
-
-    // flash visuel sur la carte
     const card = document.querySelector(`.prod-card[data-id="${id}"]`);
-    if (card) {
-      card.classList.add('flash');
-      setTimeout(() => card.classList.remove('flash'), 320);
-    }
-
+    if (card) { card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 320); }
     render();
     toast(`${prod.emoji} ${prod.nom} — +${prod.prix.toFixed(2)} €`);
   }
 
-  // ---- ANNULER DERNIÈRE VENTE ----
+  // ---- ANNULER ----
   function annulerDerniereVente() {
     if (!data.ventes.length) return;
     const v = data.ventes[data.ventes.length - 1];
     const prod = data.produits.find(p => p.id === v.produitId);
     if (prod) prod.vendu -= v.qte;
     data.ventes.pop();
-    sauvegarder();
-    render();
+    sauvegarder(); render();
     toast(`↩ Vente annulée — ${v.nom}`, 'undo');
   }
 
@@ -435,77 +450,159 @@
     if (!confirm('Vider tout l\'historique ?')) return;
     data.produits.forEach(p => p.vendu = 0);
     data.ventes = [];
-    sauvegarder();
-    render();
+    sauvegarder(); render();
     toast('Historique vidé');
   }
 
   // ---- RENDER ----
   function render() {
     renderGrid();
-    renderProdStats();
+    renderKPIs();
+    renderBestList();
+    renderHourChart();
     renderLog();
-    renderStats();
     document.getElementById('btnUndo').disabled = data.ventes.length === 0;
   }
 
+  /* Grille produits */
   function renderGrid() {
-    const el = document.getElementById('productsGrid');
-    el.innerHTML = data.produits.map(p => `
-      <div class="prod-card" data-id="${p.id}" onclick="venteRapide(${p.id})">
+    // produit le plus vendu
+    const star = data.produits.reduce((best, p) => p.vendu > (best?.vendu||0) ? p : best, null);
+    document.getElementById('productsGrid').innerHTML = data.produits.map(p => {
+      const isStar = star && p.vendu > 0 && p.id === star.id;
+      return `
+      <div class="prod-card${isStar?' star-card':''}" data-id="${p.id}" onclick="venteRapide(${p.id})">
+        ${isStar ? '<div class="star-badge">⭐</div>' : ''}
         <div class="prod-emoji">${p.emoji || '📦'}</div>
         <div class="prod-name">${esc(p.nom)}</div>
         <div class="prod-price">${p.prix.toFixed(2)} €</div>
         <div class="prod-count">${p.vendu} vendu${p.vendu > 1 ? 's' : ''}</div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
-  function renderProdStats() {
-    const el = document.getElementById('prodStats');
+  /* KPIs */
+  function renderKPIs() {
+    const today = new Date().toDateString();
+    const ventesAuj = data.ventes.filter(v => new Date(v.date).toDateString() === today);
+    const totalVentes = data.ventes.length;
+
+    const caTotal = data.ventes.reduce((s,v) => s+v.total, 0);
+    const caJour  = ventesAuj.reduce((s,v) => s+v.total, 0);
+    const panier  = totalVentes > 0 ? caTotal / totalVentes : 0;
+
+    // produit star (le plus de CA)
+    const map = {};
+    data.ventes.forEach(v => {
+      if (!map[v.produitId]) map[v.produitId] = { nom: v.nom, emoji: v.emoji||'', ca: 0, qte: 0 };
+      map[v.produitId].ca  += v.total;
+      map[v.produitId].qte += v.qte;
+    });
+    const starProd = Object.values(map).sort((a,b) => b.ca-a.ca)[0];
+
+    // rythme (ventes/heure aujourd'hui)
+    let rythme = '—';
+    if (ventesAuj.length > 0) {
+      const sorted = ventesAuj.map(v => new Date(v.date)).sort((a,b)=>a-b);
+      const dureeH = Math.max((Date.now() - sorted[0]) / 3600000, 0.1);
+      rythme = (ventesAuj.length / dureeH).toFixed(1) + '/h';
+    }
+
+    // meilleure heure
+    const heures = {};
+    data.ventes.forEach(v => {
+      const h = new Date(v.date).getHours();
+      heures[h] = (heures[h]||0) + v.total;
+    });
+    const bestH = Object.entries(heures).sort((a,b)=>b[1]-a[1])[0];
+
+    // unités par produit (sous-texte)
+    const totalUnites = data.ventes.reduce((s,v)=>s+v.qte, 0);
+
+    setText('statCA',        fmt(caTotal) + ' €');
+    setText('statCASub',     totalVentes + ' transaction' + (totalVentes>1?'s':''));
+    setText('statCAJour',    fmt(caJour) + ' €');
+    setText('statCAJourSub', ventesAuj.length + ' vente' + (ventesAuj.length>1?'s':'')+' auj.');
+    setText('statPanier',    fmt(panier) + ' €');
+    setText('statPanierSub', 'par transaction');
+    setText('statStar',      starProd ? starProd.emoji+' '+starProd.nom : '—');
+    setText('statStarSub',   starProd ? fmt(starProd.ca)+' € de CA' : 'Aucune vente');
+    setText('statVentesJour',  ventesAuj.length);
+    setText('statVentesJourSub', caJour>0 ? fmt(caJour)+' €' : '—');
+    setText('statTotal',     totalUnites);
+    setText('statTotalSub',  data.produits.length + ' produit' + (data.produits.length>1?'s':''));
+    setText('statRythme',    rythme);
+    setText('statRythmeSub', ventesAuj.length > 0 ? 'depuis la 1ère vente auj.' : 'pas de ventes auj.');
+    setText('statHeure',     bestH ? bestH[0]+'h' : '—');
+    setText('statHeureSub',  bestH ? fmt(bestH[1])+' € ce créneau' : 'Aucune vente');
+  }
+
+  /* Meilleures ventes */
+  function renderBestList() {
+    const el = document.getElementById('bestList');
     if (!data.ventes.length) { el.innerHTML = '<div class="empty-state">Aucune vente</div>'; return; }
     const map = {};
     data.ventes.forEach(v => {
-      if (!map[v.produitId]) map[v.produitId] = { nom: v.nom, emoji: v.emoji||'', unites: 0, ca: 0, nb: 0 };
+      if (!map[v.produitId]) map[v.produitId] = { nom: v.nom, emoji: v.emoji||'', unites: 0, ca: 0 };
       map[v.produitId].unites += v.qte;
       map[v.produitId].ca    += v.total;
-      map[v.produitId].nb    += 1;
     });
     const list = Object.values(map).sort((a,b) => b.ca - a.ca);
-    const maxCA = list[0]?.ca || 1;
+    const maxCA   = list[0]?.ca || 1;
     const caTotal = list.reduce((s,x) => s+x.ca, 0);
-    const rc = ['r1','r2','r3'], rl = ['#1','#2','#3'];
+    const rc = ['r1','r2','r3'];
     el.innerHTML = list.map((p,i) => {
-      const pct = Math.round(p.ca/maxCA*100);
-      const part = caTotal>0 ? (p.ca/caTotal*100).toFixed(1) : '0.0';
+      const pct  = Math.round(p.ca/maxCA*100);
+      const part = caTotal > 0 ? (p.ca/caTotal*100).toFixed(1) : '0.0';
       return `
-        <div class="psr">
-          <div class="psh">
-            <span class="psn">${p.emoji} ${esc(p.nom)}</span>
-            <span class="rank-badge ${i<3?rc[i]:''}">${i<3?rl[i]:'#'+(i+1)}</span>
+        <div class="best-row">
+          <div class="best-top">
+            <span class="best-name">${p.emoji} ${esc(p.nom)}</span>
+            <span class="rank-badge ${i<3?rc[i]:''}">#${i+1}</span>
           </div>
-          <div class="psm">
-            <div class="metric"><div class="mv col-g">${p.unites}</div><div class="ml">Unités</div></div>
-            <div class="metric"><div class="mv col-y">${p.nb}</div><div class="ml">Transac.</div></div>
-            <div class="metric"><div class="mv col-p">${p.ca.toLocaleString('fr-FR',{minimumFractionDigits:2})} €</div><div class="ml">CA</div></div>
+          <div class="best-metrics">
+            <div class="bm"><div class="bm-v col-g">${p.unites}</div><div class="bm-l">Unités</div></div>
+            <div class="bm"><div class="bm-v col-p">${fmt(p.ca)} €</div><div class="bm-l">CA</div></div>
+            <div class="bm"><div class="bm-v col-y">${part}%</div><div class="bm-l">Part</div></div>
           </div>
-          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:right">${part}% du CA</div>
+          <div class="best-bar"><div class="best-bar-fill" style="width:${pct}%"></div></div>
         </div>`;
     }).join('');
   }
 
+  /* Activité par heure */
+  function renderHourChart() {
+    const el = document.getElementById('hourChart');
+    const empty = document.getElementById('hourEmpty');
+    if (!data.ventes.length) {
+      el.innerHTML = ''; el.style.display = 'none'; empty.style.display = 'block'; return;
+    }
+    el.style.display = 'flex'; empty.style.display = 'none';
+    const heures = Array(24).fill(0);
+    data.ventes.forEach(v => heures[new Date(v.date).getHours()] += v.total);
+    const max = Math.max(...heures, 0.01);
+    const now = new Date().getHours();
+    el.innerHTML = heures.map((val, h) => {
+      const pct = Math.max(Math.round(val/max*100), val>0?4:0);
+      const active = val > 0;
+      return `
+        <div class="hour-bar-wrap">
+          <div class="hour-bar${active?' active':''}" style="height:${pct}%" title="${h}h — ${fmt(val)} €"></div>
+          ${h%6===0 ? '' : ''}
+        </div>`;
+    }).join('');
+  }
+
+  /* Historique */
   function renderLog() {
     const el = document.getElementById('salesLog');
     if (!data.ventes.length) { el.innerHTML = '<div class="empty-state">Aucune vente</div>'; return; }
-    const reversed = [...data.ventes].reverse();
-    el.innerHTML = reversed.map((v, i) => {
+    el.innerHTML = [...data.ventes].reverse().map((v, i) => {
       const d = new Date(v.date);
       const t = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
       const j = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-      const isLast = i === 0;
       return `
-        <div class="log-row${isLast?' last-entry':''}">
+        <div class="log-row${i===0?' last-entry':''}">
           <span class="log-time">${j} ${t}</span>
           <span class="log-name">${v.emoji||''} ${esc(v.nom)}</span>
           <span class="log-amt">+${v.total.toFixed(2)} €</span>
@@ -513,16 +610,14 @@
     }).join('');
   }
 
-  function renderStats() {
-    const ca = data.ventes.reduce((s,v) => s+v.total, 0);
-    const today = new Date().toDateString();
-    const auj = data.ventes.filter(v => new Date(v.date).toDateString()===today).length;
-    document.getElementById('statCA').textContent = ca.toLocaleString('fr-FR',{minimumFractionDigits:2})+' €';
-    document.getElementById('statAujourd').textContent = auj+' vente'+(auj>1?'s':'');
-    document.getElementById('statProduits').textContent = data.produits.length;
-    document.getElementById('statTotal').textContent = data.ventes.reduce((s,v) => s+v.qte, 0);
+  /* Utilitaires */
+  function fmt(n) {
+    return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
-
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
   function esc(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
