@@ -20,3 +20,4 @@ Une fois déployé, le site sera disponible à l’URL :
 `https://<ton-username>.github.io/<nom-du-repo>/`
 
 Exemple : `https://alex.github.io/Basket/`
+
