@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suivi Ventes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e0f11;
+        --card: #1d2026;
+        --surface: #16181c;
+        --border: #2a2d35;
+        --accent1: #f0c060;
+        --accent2: #60d0a0;
+        --accent3: #a078f0;
+        --accent4: #f06060;
+        --text: #e8eaf0;
+        --muted: #7a7f8e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Mono', monospace;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 22px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .logo {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: clamp(24px, 3vw, 34px);
+      }
+
+      .logo .accent {
+        color: var(--accent1);
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .autosave {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 8px 12px;
+      }
+
+      .pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent2);
+        animation: pulse 1.4s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(96, 208, 160, 0.5);
+        }
+        70% {
+          box-shadow: 0 0 0 12px rgba(96, 208, 160, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(96, 208, 160, 0);
+        }
+      }
+
+      .btn {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-family: inherit;
+        border-radius: 12px;
+        padding: 10px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .btn.undo {
+        border-color: color-mix(in srgb, var(--accent4) 50%, var(--border));
+        color: var(--accent4);
+      }
+
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .stat-title {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .stat-value {
+        margin-top: 8px;
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 27px;
+      }
+
+      .sales-one-click {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 20px;
+        margin: 0 0 14px;
+      }
+
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 14px;
+      }
+
+      .product-card {
+        min-height: 130px;
+        border-radius: 14px;
+        border: 2px solid var(--border);
+        background: var(--card);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+        transition: 0.18s ease;
+        user-select: none;
+      }
+
+      .product-card:hover {
+        border-color: var(--accent2);
+        background: #1b2820;
+        box-shadow: 0 0 0 1px rgba(96, 208, 160, 0.2), 0 10px 24px rgba(96, 208, 160, 0.12);
+      }
+
+      .product-card:active {
+        transform: scale(0.94);
+      }
+
+      .product-card.flash {
+        border-color: var(--accent2);
+        border-width: 3px;
+        box-shadow: 0 0 0 2px rgba(96, 208, 160, 0.25), 0 0 30px rgba(96, 208, 160, 0.2);
+      }
+
+      .product-emoji {
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .product-name {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .product-price {
+        color: var(--accent2);
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 18px;
+      }
+
+      .product-sold {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .bottom-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .small-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 7px 10px;
+        font-family: inherit;
+        font-size: 11px;
+        cursor: pointer;
+      }
+
+      .small-btn:hover {
+        border-color: var(--accent4);
+        color: var(--accent4);
+      }
+
+      .stats-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .row {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: var(--card);
+      }
+
+      .row-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 10px;
+      }
+
+      .prod-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .rank {
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 10px;
+        font-weight: 500;
+      }
+
+      .gold {
+        color: #111;
+        background: linear-gradient(90deg, #f5d278, #d8a53d);
+      }
+
+      .silver {
+        color: #111;
+        background: linear-gradient(90deg, #d4d9e3, #9ea7b5);
+      }
+
+      .bronze {
+        color: #111;
+        background: linear-gradient(90deg, #d89a6e, #a45d2f);
+      }
+
+      .metrics {
+        display: flex;
+        gap: 10px;
+        font-size: 11px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+
+      .metrics .u {
+        color: var(--accent2);
+      }
+      .metrics .t {
+        color: var(--accent1);
+      }
+      .metrics .c {
+        color: var(--accent3);
+      }
+
+      .bar-wrap {
+        height: 8px;
+        background: #111319;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent2), var(--accent1));
+        width: 0;
+      }
+
+      .row-foot {
+        text-align: right;
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .history {
+        max-height: 280px;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-right: 4px;
+      }
+
+      .history-item {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .history-item.latest {
+        border-left: 2px solid var(--accent2);
+      }
+
+      .hist-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .hist-date {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .hist-name {
+        font-size: 12px;
+      }
+
+      .hist-amount {
+        color: var(--accent2);
+        font-weight: 500;
+      }
+
+      .empty {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 8px;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translate(-50%, 24px);
+        opacity: 0;
+        border-radius: 100px;
+        padding: 10px 18px;
+        font-size: 13px;
+        border: 1px solid transparent;
+        pointer-events: none;
+        transition: 0.25s ease;
+      }
+
+      .toast.show {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      .toast.sale {
+        background: rgba(96, 208, 160, 0.16);
+        border-color: rgba(96, 208, 160, 0.5);
+        color: #bff5de;
+      }
+
+      .toast.undo {
+        background: rgba(240, 96, 96, 0.16);
+        border-color: rgba(240, 96, 96, 0.5);
+        color: #ffd1d1;
+      }
+
+      @media (max-width: 980px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .bottom-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="logo">Suivi <span class="accent">Ventes</span></div>
+        <div class="actions">
+          <div class="autosave"><span class="pulse"></span>Auto-sauvegarde</div>
+          <button id="undoBtn" class="btn undo" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 14 4 9l5-5" />
+              <path d="M20 20a8 8 0 0 0-8-8H4" />
+            </svg>
+            Annuler dernière vente
+          </button>
+        </div>
+      </header>
+
+      <section class="stats-grid" id="globalStats"></section>
+
+      <section class="sales-one-click">
+        <h2 class="section-title">⚡ Vente en 1 clic</h2>
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <h3 class="section-title" style="font-size: 18px; margin: 0">Stats par produit</h3>
+          </div>
+          <div class="stats-list" id="productStats"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h3 class="section-title" style="font-size: 18px; margin: 0">Historique</h3>
+            <button id="clearBtn" class="small-btn">Tout effacer</button>
+          </div>
+          <div class="history" id="history"></div>
+        </article>
+      </section>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      const STORAGE_KEY = 'suiviVentes';
+      const DEFAULT_PRODUCTS = [
+        { id: 1, nom: 'Café', emoji: '☕', prix: 1.5 },
+        { id: 2, nom: 'Sandwich', emoji: '🥪', prix: 4.5 },
+        { id: 3, nom: "Jus d'orange", emoji: '🍊', prix: 2.0 },
+        { id: 4, nom: 'Eau', emoji: '💧', prix: 1.0 },
+        { id: 5, nom: 'Croissant', emoji: '🥐', prix: 1.2 },
+      ];
+
+      const state = loadState();
+
+      const productsGrid = document.getElementById('productsGrid');
+      const globalStats = document.getElementById('globalStats');
+      const productStats = document.getElementById('productStats');
+      const history = document.getElementById('history');
+      const clearBtn = document.getElementById('clearBtn');
+      const undoBtn = document.getElementById('undoBtn');
+      const toast = document.getElementById('toast');
+
+      let toastTimer;
+
+      function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          const initial = {
+            produits: DEFAULT_PRODUCTS.map((p) => ({ ...p, vendu: 0 })),
+            ventes: [],
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+          return initial;
+        }
+        try {
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed.produits) || !Array.isArray(parsed.ventes)) {
+            throw new Error('Invalid state');
+          }
+          parsed.produits = parsed.produits.map((p) => ({ ...p, vendu: p.vendu || 0 }));
+          return parsed;
+        } catch {
+          const fallback = {
+            produits: DEFAULT_PRODUCTS.map((p) => ({ ...p, vendu: 0 })),
+            ventes: [],
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+          return fallback;
+        }
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function euro(v) {
+        return `${v.toFixed(2)} €`;
+      }
+
+      function formatDate(iso) {
+        const d = new Date(iso);
+        return d.toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+
+      function showToast(message, type = 'sale') {
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2000);
+      }
+
+      function addSale(productId, card) {
+        const product = state.produits.find((p) => p.id === productId);
+        if (!product) return;
+
+        product.vendu = (product.vendu || 0) + 1;
+        const now = new Date();
+        const sale = {
+          id: Date.now(),
+          produitId: product.id,
+          nom: product.nom,
+          emoji: product.emoji,
+          prix: product.prix,
+          qte: 1,
+          total: product.prix,
+          date: now.toISOString(),
+        };
+        state.ventes.push(sale);
+        saveState();
+        render();
+
+        card.classList.add('flash');
+        setTimeout(() => card.classList.remove('flash'), 320);
+
+        showToast(`${product.emoji} ${product.nom} — +${euro(product.prix)}`, 'sale');
+      }
+
+      function undoLastSale() {
+        if (!state.ventes.length) return;
+        const sale = state.ventes.pop();
+        const product = state.produits.find((p) => p.id === sale.produitId);
+        if (product) {
+          product.vendu = Math.max(0, (product.vendu || 0) - 1);
+        }
+        saveState();
+        render();
+        showToast(`↩ Vente annulée — ${sale.nom}`, 'undo');
+      }
+
+      function clearAll() {
+        if (!state.ventes.length) return;
+        const ok = window.confirm('Supprimer tout l\'historique des ventes ?');
+        if (!ok) return;
+
+        state.ventes = [];
+        state.produits = state.produits.map((p) => ({ ...p, vendu: 0 }));
+        saveState();
+        render();
+      }
+
+      function renderGlobalStats() {
+        const totalCA = state.ventes.reduce((s, v) => s + v.total, 0);
+        const soldUnits = state.ventes.reduce((s, v) => s + (v.qte || 1), 0);
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = today.getMonth();
+        const dd = today.getDate();
+        const salesToday = state.ventes.filter((v) => {
+          const d = new Date(v.date);
+          return d.getFullYear() === yyyy && d.getMonth() === mm && d.getDate() === dd;
+        }).length;
+
+        const cards = [
+          { title: 'CA total', value: euro(totalCA), color: 'var(--accent1)' },
+          { title: "Ventes aujourd'hui", value: salesToday, color: 'var(--accent2)' },
+          { title: 'Nb produits', value: state.produits.length, color: 'var(--text)' },
+          { title: 'Unités vendues', value: soldUnits, color: 'var(--accent3)' },
+        ];
+
+        globalStats.innerHTML = cards
+          .map(
+            (c) => `
+              <article class="stat-card">
+                <div class="stat-title">${c.title}</div>
+                <div class="stat-value" style="color:${c.color}">${c.value}</div>
+              </article>
+            `,
+          )
+          .join('');
+      }
+
+      function renderProducts() {
+        productsGrid.innerHTML = '';
+        state.produits.forEach((p) => {
+          const card = document.createElement('button');
+          card.className = 'product-card';
+          card.type = 'button';
+          card.innerHTML = `
+            <div class="product-emoji">${p.emoji}</div>
+            <div class="product-name">${p.nom}</div>
+            <div class="product-price">${euro(p.prix)}</div>
+            <div class="product-sold">${p.vendu || 0} vendu(s)</div>
+          `;
+          card.addEventListener('click', () => addSale(p.id, card));
+          productsGrid.appendChild(card);
+        });
+      }
+
+      function renderProductStats() {
+        const totalCA = state.ventes.reduce((s, v) => s + v.total, 0);
+        const grouped = state.produits
+          .map((p) => {
+            const v = state.ventes.filter((x) => x.produitId === p.id);
+            const units = v.reduce((s, x) => s + (x.qte || 1), 0);
+            const transactions = v.length;
+            const ca = v.reduce((s, x) => s + x.total, 0);
+            return { ...p, units, transactions, ca };
+          })
+          .sort((a, b) => b.ca - a.ca);
+
+        if (!grouped.some((g) => g.ca > 0)) {
+          productStats.innerHTML = '<div class="empty">Aucune vente pour le moment.</div>';
+          return;
+        }
+
+        productStats.innerHTML = grouped
+          .filter((g) => g.ca > 0)
+          .map((g, i) => {
+            const pct = totalCA ? (g.ca / totalCA) * 100 : 0;
+            const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+            const rank = i < 3 ? `<span class="rank ${rankClass}">#${i + 1}</span>` : '';
+            return `
+              <div class="row">
+                <div class="row-top">
+                  <div class="prod-label">${g.emoji} ${g.nom}</div>
+                  ${rank}
+                </div>
+                <div class="metrics">
+                  <span class="u">Unités: ${g.units}</span>
+                  <span class="t">Transactions: ${g.transactions}</span>
+                  <span class="c">CA: ${euro(g.ca)}</span>
+                </div>
+                <div class="bar-wrap"><div class="bar" style="width:${pct.toFixed(2)}%"></div></div>
+                <div class="row-foot">${pct.toFixed(1)}% du CA total</div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function renderHistory() {
+        if (!state.ventes.length) {
+          history.innerHTML = '<div class="empty">Pas encore de ventes.</div>';
+          return;
+        }
+
+        history.innerHTML = state.ventes
+          .slice()
+          .reverse()
+          .map((v, i) => `
+            <div class="history-item ${i === 0 ? 'latest' : ''}">
+              <div class="hist-left">
+                <div class="hist-date">${formatDate(v.date)}</div>
+                <div class="hist-name">${v.emoji} ${v.nom}</div>
+              </div>
+              <div class="hist-amount">+${euro(v.total)}</div>
+            </div>
+          `)
+          .join('');
+      }
+
+      function render() {
+        renderGlobalStats();
+        renderProducts();
+        renderProductStats();
+        renderHistory();
+        undoBtn.disabled = state.ventes.length === 0;
+      }
+
+      undoBtn.addEventListener('click', undoLastSale);
+      clearBtn.addEventListener('click', clearAll);
+
+      render();
+    </script>
+  </body>
+</html>
