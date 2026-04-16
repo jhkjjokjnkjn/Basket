@@ -358,15 +358,22 @@
     try {
       const r = localStorage.getItem('suiviVentes');
       if (r) {
-        data = JSON.parse(r);
+        const saved = JSON.parse(r);
+        // Toujours utiliser PRODUITS_DEFAUT comme source de vérité
+        data.produits = PRODUITS_DEFAUT.map(p => {
+          const s = saved.produits?.find(sp => sp.id === p.id);
+          return {...p, vendu: s ? s.vendu : 0};
+        });
+        data.ventes = saved.ventes || [];
       } else {
-        // Premier lancement : charger les produits par défaut
         data.produits = PRODUITS_DEFAUT.map(p => ({...p}));
-        sauvegarder();
+        data.ventes = [];
       }
     } catch(e) {
       data.produits = PRODUITS_DEFAUT.map(p => ({...p}));
+      data.ventes = [];
     }
+    sauvegarder();
   }
 
   function sauvegarder() {
