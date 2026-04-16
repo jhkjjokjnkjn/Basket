@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi des Ventes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --card: #1d2026;
+    --border: #2a2d35;
+    --accent: #f0c060;
+    --accent2: #60d0a0;
+    --accent3: #a078f0;
+    --danger: #f06060;
+    --text: #e8eaf0;
+    --muted: #7a7f8e;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 28px 20px 60px;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .save-status {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .save-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+  /* BOUTON ANNULER */
+  .btn-undo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .btn-undo:hover { background: #231a1a; border-color: var(--danger); }
+  .btn-undo:active { transform: scale(.97); }
+  .btn-undo:disabled { opacity: .3; cursor: not-allowed; }
+  .btn-undo svg { flex-shrink: 0; }
+
+  /* ---- STATS ---- */
+  .stats-grid {
+    max-width: 1000px;
+    margin: 0 auto 22px;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+  }
+  @media(max-width:640px){ .stats-grid{grid-template-columns:1fr 1fr} }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .stat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+  .col-y { color: var(--accent); }
+  .col-g { color: var(--accent2); }
+  .col-p { color: var(--accent3); }
+
+  /* ---- PRODUITS (grille principale) ---- */
+  .products-section {
+    max-width: 1000px;
+    margin: 0 auto 22px;
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+
+  .prod-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 18px 20px;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: border-color .15s, background .15s, transform .12s, box-shadow .15s;
+    animation: fadeIn .2s ease;
+    user-select: none;
+    min-height: 130px;
+    justify-content: center;
+  }
+  .prod-card:hover {
+    border-color: var(--accent2);
+    background: #1b2820;
+    box-shadow: 0 0 0 1px var(--accent2), 0 4px 20px rgba(96,208,160,.12);
+  }
+  .prod-card:active {
+    transform: scale(.94);
+  }
+  .prod-card.flash {
+    border-color: var(--accent2) !important;
+    background: #1e3028 !important;
+    box-shadow: 0 0 0 2px var(--accent2), 0 0 24px rgba(96,208,160,.4) !important;
+  }
+
+  .prod-emoji {
+    font-size: 30px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .prod-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .prod-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: -0.3px;
+  }
+
+  .prod-count {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+
+  /* ---- BOTTOM ROW : stats + historique ---- */
+  .bottom-row {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width:640px){ .bottom-row{grid-template-columns:1fr} }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  /* Stats produit */
+  .prod-stat-list { display: flex; flex-direction: column; gap: 8px; }
+  .psr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 13px;
+  }
+  .psh { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .psn { font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .rank-badge {
+    font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 1px 7px; white-space: nowrap;
+  }
+  .r1{color:var(--accent);border-color:var(--accent)}
+  .r2{color:#c0c0d0;border-color:#c0c0d0}
+  .r3{color:#c08050;border-color:#c08050}
+  .psm { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+  .metric { background: var(--card); border-radius: 5px; padding: 6px 8px; text-align: center; }
+  .mv { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; }
+  .ml { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-top: 1px; }
+  .bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--accent2),var(--accent)); transition: width .4s ease; }
+
+  /* Log */
+  .sales-log { display: flex; flex-direction: column; gap: 5px; max-height: 280px; overflow-y: auto; }
+  .sales-log::-webkit-scrollbar{width:3px}
+  .sales-log::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .log-row {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 10px; background: var(--surface); border-radius: 6px;
+    font-size: 11px; animation: fadeIn .15s ease;
+  }
+  .log-row.last-entry { border-left: 2px solid var(--accent2); }
+  .log-time  { color: var(--muted); font-size: 9px; white-space: nowrap; }
+  .log-name  { flex: 1; }
+  .log-amt   { color: var(--accent2); font-weight: 500; white-space: nowrap; }
+
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .btn-small { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; cursor: pointer; }
+  .btn-small:hover { color: var(--danger); border-color: var(--danger); }
+
+  .empty-state { text-align: center; color: var(--muted); font-size: 11px; padding: 16px 0; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(12px);
+    background: var(--accent2); color: #111;
+    padding: 10px 20px; border-radius: 100px; font-size: 12px; font-weight: 700;
+    opacity: 0; transition: all .2s; pointer-events: none; z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.undo { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Suivi <span>Ventes</span></div>
+  <div class="header-right">
+    <div class="save-status"><div class="save-dot"></div> Auto-sauvegarde</div>
+    <button class="btn-undo" id="btnUndo" onclick="annulerDerniereVente()" disabled>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 7 12 5 17 8s7 9 4 14"/></svg>
+      Annuler dernière vente
+    </button>
+  </div>
+</header>
+
+<!-- STATS GLOBALES -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-lbl">CA total</div>
+    <div class="stat-val col-y" id="statCA">0,00 €</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Aujourd'hui</div>
+    <div class="stat-val col-g" id="statAujourd">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Produits</div>
+    <div class="stat-val" id="statProduits">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Unités vendues</div>
+    <div class="stat-val col-p" id="statTotal">0</div>
+  </div>
+</div>
+
+<!-- PRODUITS -->
+<div class="products-section">
+  <div class="section-label">⚡ Vente en 1 clic</div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- STATS + HISTORIQUE -->
+<div class="bottom-row">
+
+  <div class="panel">
+    <div class="panel-title">📊 Stats par produit</div>
+    <div class="prod-stat-list" id="prodStats">
+      <div class="empty-state">Aucune vente</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section-header">
+      <div class="panel-title" style="margin:0">Historique</div>
+      <button class="btn-small" onclick="viderHistorique()">Tout effacer</button>
+    </div>
+    <div class="sales-log" id="salesLog">
+      <div class="empty-state">Aucune vente</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---- PRODUITS PRÉ-ENREGISTRÉS ----
+  // Modifie cette liste avec tes vrais produits
+  const PRODUITS_DEFAUT = [
+    { id: 1, nom: 'Café',        emoji: '☕', prix: 1.50,  vendu: 0 },
+    { id: 2, nom: 'Sandwich',    emoji: '🥪', prix: 4.50,  vendu: 0 },
+    { id: 3, nom: 'Jus d\'orange', emoji: '🍊', prix: 2.00, vendu: 0 },
+    { id: 4, nom: 'Eau',         emoji: '💧', prix: 1.00,  vendu: 0 },
+    { id: 5, nom: 'Croissant',   emoji: '🥐', prix: 1.20,  vendu: 0 },
+  ];
+
+  let data = { produits: [], ventes: [] };
+
+  function charger() {
+    try {
+      const r = localStorage.getItem('suiviVentes');
+      if (r) {
+        data = JSON.parse(r);
+      } else {
+        // Premier lancement : charger les produits par défaut
+        data.produits = PRODUITS_DEFAUT.map(p => ({...p}));
+        sauvegarder();
+      }
+    } catch(e) {
+      data.produits = PRODUITS_DEFAUT.map(p => ({...p}));
+    }
+  }
+
+  function sauvegarder() {
+    localStorage.setItem('suiviVentes', JSON.stringify(data));
+  }
+
+  // ---- TOAST ----
+  let toastTimer;
+  function toast(msg, type='') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (type ? ' '+type : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+  }
+
+  // ---- VENTE 1 CLIC ----
+  function venteRapide(id) {
+    const prod = data.produits.find(p => p.id === id);
+    if (!prod) return;
+    const vente = {
+      id: Date.now(),
+      produitId: prod.id,
+      nom: prod.nom,
+      emoji: prod.emoji || '',
+      prix: prod.prix,
+      qte: 1,
+      total: prod.prix,
+      date: new Date().toISOString()
+    };
+    data.ventes.push(vente);
+    prod.vendu += 1;
+    sauvegarder();
+
+    // flash visuel sur la carte
+    const card = document.querySelector(`.prod-card[data-id="${id}"]`);
+    if (card) {
+      card.classList.add('flash');
+      setTimeout(() => card.classList.remove('flash'), 320);
+    }
+
+    render();
+    toast(`${prod.emoji} ${prod.nom} — +${prod.prix.toFixed(2)} €`);
+  }
+
+  // ---- ANNULER DERNIÈRE VENTE ----
+  function annulerDerniereVente() {
+    if (!data.ventes.length) return;
+    const v = data.ventes[data.ventes.length - 1];
+    const prod = data.produits.find(p => p.id === v.produitId);
+    if (prod) prod.vendu -= v.qte;
+    data.ventes.pop();
+    sauvegarder();
+    render();
+    toast(`↩ Vente annulée — ${v.nom}`, 'undo');
+  }
+
+  function viderHistorique() {
+    if (!confirm('Vider tout l\'historique ?')) return;
+    data.produits.forEach(p => p.vendu = 0);
+    data.ventes = [];
+    sauvegarder();
+    render();
+    toast('Historique vidé');
+  }
+
+  // ---- RENDER ----
+  function render() {
+    renderGrid();
+    renderProdStats();
+    renderLog();
+    renderStats();
+    document.getElementById('btnUndo').disabled = data.ventes.length === 0;
+  }
+
+  function renderGrid() {
+    const el = document.getElementById('productsGrid');
+    el.innerHTML = data.produits.map(p => `
+      <div class="prod-card" data-id="${p.id}" onclick="venteRapide(${p.id})">
+        <div class="prod-emoji">${p.emoji || '📦'}</div>
+        <div class="prod-name">${esc(p.nom)}</div>
+        <div class="prod-price">${p.prix.toFixed(2)} €</div>
+        <div class="prod-count">${p.vendu} vendu${p.vendu > 1 ? 's' : ''}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderProdStats() {
+    const el = document.getElementById('prodStats');
+    if (!data.ventes.length) { el.innerHTML = '<div class="empty-state">Aucune vente</div>'; return; }
+    const map = {};
+    data.ventes.forEach(v => {
+      if (!map[v.produitId]) map[v.produitId] = { nom: v.nom, emoji: v.emoji||'', unites: 0, ca: 0, nb: 0 };
+      map[v.produitId].unites += v.qte;
+      map[v.produitId].ca    += v.total;
+      map[v.produitId].nb    += 1;
+    });
+    const list = Object.values(map).sort((a,b) => b.ca - a.ca);
+    const maxCA = list[0]?.ca || 1;
+    const caTotal = list.reduce((s,x) => s+x.ca, 0);
+    const rc = ['r1','r2','r3'], rl = ['#1','#2','#3'];
+    el.innerHTML = list.map((p,i) => {
+      const pct = Math.round(p.ca/maxCA*100);
+      const part = caTotal>0 ? (p.ca/caTotal*100).toFixed(1) : '0.0';
+      return `
+        <div class="psr">
+          <div class="psh">
+            <span class="psn">${p.emoji} ${esc(p.nom)}</span>
+            <span class="rank-badge ${i<3?rc[i]:''}">${i<3?rl[i]:'#'+(i+1)}</span>
+          </div>
+          <div class="psm">
+            <div class="metric"><div class="mv col-g">${p.unites}</div><div class="ml">Unités</div></div>
+            <div class="metric"><div class="mv col-y">${p.nb}</div><div class="ml">Transac.</div></div>
+            <div class="metric"><div class="mv col-p">${p.ca.toLocaleString('fr-FR',{minimumFractionDigits:2})} €</div><div class="ml">CA</div></div>
+          </div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:right">${part}% du CA</div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderLog() {
+    const el = document.getElementById('salesLog');
+    if (!data.ventes.length) { el.innerHTML = '<div class="empty-state">Aucune vente</div>'; return; }
+    const reversed = [...data.ventes].reverse();
+    el.innerHTML = reversed.map((v, i) => {
+      const d = new Date(v.date);
+      const t = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      const j = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+      const isLast = i === 0;
+      return `
+        <div class="log-row${isLast?' last-entry':''}">
+          <span class="log-time">${j} ${t}</span>
+          <span class="log-name">${v.emoji||''} ${esc(v.nom)}</span>
+          <span class="log-amt">+${v.total.toFixed(2)} €</span>
+        </div>`;
+    }).join('');
+  }
+
+  function renderStats() {
+    const ca = data.ventes.reduce((s,v) => s+v.total, 0);
+    const today = new Date().toDateString();
+    const auj = data.ventes.filter(v => new Date(v.date).toDateString()===today).length;
+    document.getElementById('statCA').textContent = ca.toLocaleString('fr-FR',{minimumFractionDigits:2})+' €';
+    document.getElementById('statAujourd').textContent = auj+' vente'+(auj>1?'s':'');
+    document.getElementById('statProduits').textContent = data.produits.length;
+    document.getElementById('statTotal').textContent = data.ventes.reduce((s,v) => s+v.qte, 0);
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  charger();
+  render();
+</script>
+</body>
+</html>
